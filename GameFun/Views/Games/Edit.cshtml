@@ -1,0 +1,91 @@
+﻿@model EditGameFormViewModel;
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h5>
+    <i class="fa-solid fa-plus"></i>
+    Edit Game
+</h5>
+
+<form asp-controller="Games" method="post" enctype="multipart/form-data" asp-action="Edit" asp-route-id="@Model.Id">
+    <div class="row justify-content-between pt-3">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter game name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                    <option value="">-- Select a category --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="SelectedDevices" class="form-label"></label>
+                <select asp-for="SelectedDevices" asp-items="Model.Devices" class="form-control" multiple="multiple">
+                </select>
+                <span asp-validation-for="SelectedDevices" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter game description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Cover" class="form-label"></label>
+                <input asp-for="Cover" type="file" class="form-control" id="coverInput" />
+                <small class="form-text text-muted d-block">Please upload an image in JPG or PNG format with a maximum size of 2 MB.</small>
+                <span asp-validation-for="Cover" class="text-danger"></span>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary  text-light mb-5">Save</button>
+        </div>
+        <div class="col-md-5 overflow-hidden">
+            <h6>Cover Preview</h6>
+            @if (!string.IsNullOrEmpty(Model.CurrentCover))
+            {
+                <img id="coverPreview"
+                     src="~/covers/@Model.CurrentCover"
+                     class="img-thumbnail mt-2"
+                     style="max-width:400px;" />
+            }
+            else
+            {
+                <img id="coverPreview"
+                     src="#"
+                     class="img-thumbnail mt-2"
+                     style="max-width:400px; display:none;" />
+            }
+
+
+        </div>
+
+    </div>
+
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial.cshtml"></partial>
+
+
+
+    <script>
+        document.getElementById("coverInput").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const preview = document.getElementById("coverPreview");
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = "block";
+            }
+        });
+    </script>
+}
+

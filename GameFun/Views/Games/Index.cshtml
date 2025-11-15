@@ -1,0 +1,112 @@
+﻿@model IEnumerable<Game>
+@{
+    ViewData["Title"] = "Index";
+}
+
+@Html.AntiForgeryToken()
+
+<a class="btn btn-secondary mb-3" asp-action="Create">Add Game</a>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning" role="alert">
+        <h4>NO games!</h4>
+        <p>No games have been added yet!</p>
+    </div>
+}
+else
+{
+    <div class="mt-5">
+        <table class="table table-bordered">
+            @foreach (var game in Model)
+            {
+                <tr class="border-success border-1">
+                    <td>
+                        <div class="d-flex">
+                            <div class="pe-4">
+                                <img src="~/Covers/@game.Cover" alt="@game.Name" class="img-thumbnail" width="100" />
+                            </div>
+                            <div class="d-flex flex-column justify-content-around">
+                                <h4 class="text-light">@game.Name</h4>
+                                <h5 class="text-white">@game.Category.Name</h5>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="align-middle">
+                        <div class="d-flex justify-content-end">
+                            <a class="btn btn-primary me-2 rounded" asp-action="Edit" asp-route-id="@game.Id">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </a>
+                            <button class="btn btn-danger js-delete" data-id="@game.Id">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $('.js-delete').on('click', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var gameId = btn.data('id');
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-danger mx-2",
+                    cancelButton: "btn btn-light"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Are you sure you want to delete this game?",
+                text: "This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                reverseButtons: true,
+                position: 'center'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Games/Delete/' + gameId,
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function () {
+                            btn.closest('tr').fadeOut();
+                            swalWithBootstrapButtons.fire({
+                                title: "Deleted!",
+                                text: "The game has been deleted.",
+                                icon: "success",
+                                position: 'center'
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                            swalWithBootstrapButtons.fire({
+                                title: "Error!",
+                                text: "There was a problem deleting the game.",
+                                icon: "error",
+                                position: 'center'
+                            });
+                        }
+                    });
+                }
+                // إذا ضغط Cancel يغلق النافذة مباشرة بدون رسالة
+            });
+        });
+    });
+</script>
+

@@ -1,0 +1,40 @@
+﻿@model Game
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1 class="mb-4 text-success">Game Details</h1>
+
+<div class="d-flex justify-content-center">
+    <div style="max-width: 900px; width: 100%;">
+        <div class="card border border-success  bg-opacity-25 mb-5">
+            <div class="row g-0 " style="min-height:320px;">
+
+                <div class="col-md-8">
+                    <div class="card-body text-white d-flex flex-column" style="height:100%;">
+                        <h3 class="card-title text-success mb-4  fw-bolder">@Model.Name</h3>
+                        <span class="badge bg-info  mb-4 px-3 py-1" style="width: fit-content; letter-spacing:1px; font-size:18px;">@Model.Category.Name</span>
+                        <p class="card-text flex-grow-1">@Model.Description</p>
+                        <div class="mt-auto">
+                            @foreach (var device in Model.Devices)
+                            {
+                                <i class="@device.Device.Icon me-2 fs-2 text-secondary"></i>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <div class="h-100" style="width:100%;">
+                        <img src="~/Covers/@Model.Cover" class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;" alt="@Model.Name" />
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <a class="btn btn-outline-secondary" asp-action="Index">Back to List</a>
+    </div>
+</div>
